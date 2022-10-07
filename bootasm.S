@@ -70,8 +70,9 @@ real_start:
 	jne		read_failed
 
  	movb	(boot_device), %dl	# Pass boot device ID to second stage
-    movw    $0x9000, %ax        # Jump to stage 2
-    jmp     *%ax
+    movw    $0x9000, %ax        # Jump to stage 2 --> loads location of s2 into ax
+    call check_loaded_memory    # checks if ax contins nothing or our code
+    jmp     *%ax                # jump to content of ax
 
 read_failed:	                # Display error messages
 	movw 	$read_failed_msg, %si
@@ -95,3 +96,14 @@ read_failed_msg:
 cannot_continue:
     .string "Cannot continue boot process"
 
+check_loaded_memory:
+# checks that 0x9000 is non-zero
+    CMP $0, %ax
+    jmp check_empty
+    jmp check_exists
+# not 0 is return to continue
+check_exists:
+    ret
+# addess pointing to all 0's calls error message calles endless loop
+check_empty:
+    jmp read_failed
