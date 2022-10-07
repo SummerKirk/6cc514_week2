@@ -64,6 +64,12 @@ bootblock: bootasm.S
 	$(OBJCOPY) -S -O binary -j .text bootblock.o bootblock
 	./sign.pl bootblock
 
+bootblock2: bootasm2.S 
+	$(CC) $(CFLAGS) -fno-pic -nostdinc -I. -c bootasm2.S
+	$(LD) $(LDFLAGS) -N -e start -Ttext 0x9000 -o bootblock2.o bootasm2.o 
+	$(OBJCOPY) -S -O binary -j .text bootblock2.o bootblock2
+	./sign.pl bootblock2
+
 
 .PRECIOUS: %.o
 
