@@ -7,12 +7,31 @@ real_start:
 # put stuff here ((COMMENTS NEED TO BE UP AGAINST EDGE OR AFTER CODE)
     movw $read_part2_message, %si
     call cons_writeline
+    call check_boot_location
+
+endless_loop:                   # Loop forever more
+    jmp     endless_loop   
 
 check_boot_location:
 # checks value passed from first stage (in: DL)
 # 1 or 0 for floppy, 0x80 or more it's hard disk drive
+    CMP $0, %dl
+    jz result_floppy_disk
+    CMP $1, %dl
+    je result_floppy_disk
+    CMP $0x80, %dl
+    jge result_hard_disk
+finish_boot_check:
+    call cons_writeline
+    ret
 
+result_hard_disk:
+    movw    $read_hard_disk_msg, %si
+    jmp finish_boot_check
 
+result_floppy_disk:
+    movw    $read_floppy_disk_msg, %si
+    jmp finish_boot_check
 
 read_part2_message:     
     .string "seccond stage has been reached" # movw $message_location, %si before the writeline call
@@ -45,3 +64,9 @@ cons_writeline:
     call    cons_write
     call    cons_write_crlf
     ret  
+
+read_hard_disk_msg:
+    .string "hard disk"
+
+read_floppy_disk_msg:
+    .string "floppy disk"
