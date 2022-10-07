@@ -98,8 +98,8 @@ cannot_continue:
 
 check_loaded_memory:
 # checks that 0x9000 is non-zero
-    CMP $0, %ax
-    jmp check_empty
+    CMP $0, (%bx)
+    jz check_empty
     jmp check_exists
 # not 0 is return to continue
 check_exists:
