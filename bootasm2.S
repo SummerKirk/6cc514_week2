@@ -6,7 +6,7 @@ start:
 real_start:
 # put stuff here ((COMMENTS NEED TO BE UP AGAINST EDGE OR AFTER CODE)
     movw $read_part2_message, %si
-    call writeline
+    call cons_writeline
 
 check_boot_location:
 # checks value passed from first stage (in: DL)
